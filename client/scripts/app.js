@@ -14,7 +14,9 @@ var app = {
     // this.addFriend();
     // this.handleSubmit();
   },
-  server: 'https://api.parse.com/1/classes/chatterbox',
+  //server: 'https://api.parse.com/1/classes/chatterbox',
+  server: '127.0.0.1:3000/messages/',
+
   send: function(message) {
     $.ajax({
       url: this.server,
