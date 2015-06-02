@@ -21,7 +21,7 @@ var app = {
     console.log('in ajax send function');
 
     $.ajax({
-      url: this.server,
+      url: this.server + 'send',
       type: 'POST',
       data: JSON.stringify(message),
       contentType: 'application/json',
@@ -39,17 +39,18 @@ var app = {
       type: 'GET',
       contentType: 'application/json',
       success: function (data) {
+        data = JSON.parse(data);
+        console.log(data);
         console.log('chatterbox: Messages retrieved');
-        messages = JSON.parse(data);
+        messages = data.results;
         console.log(messages);
       },
       error: function (data, status) {
+        console.log(data);
         console.log(status);
         console.error('chatterbox: Failed to retrieve message');
       },
       complete: function() {
-
-        console.log(messages[0]);
 
         if (app.roomname !== undefined) {
           messages = _.filter(messages, function(message) {

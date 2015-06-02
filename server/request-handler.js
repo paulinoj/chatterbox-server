@@ -12,7 +12,8 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
-var messages = [
+var messages = {};
+messages.results = [
 {"username": "whatever", "text": "whaatver", "roomname": "HR29"},
 {"username": "whatever2", "text": "whaatver2", "roomname": "HR29A"},
 {"username": "whatever3", "text": "whaatver3", "roomname": "HR29B"},
@@ -36,22 +37,27 @@ var requestHandler = function(request, response) {
   // console.logs in your code.
   console.log("Serving request type " + request.method + " for url " + request.url);
 
-
-  if (request.method === 'POST') {
+  if (request.method === 'POST' && request.url === '/send') {
     var body = "";
+    console.log("Do we get in post method")
     request.on('data', function(chunk) {
       body += chunk;
     });
     request.on('end', function(){
-      console.log(body);
-      messages.push(JSON.parse(body));
-      console.log(messages);
+      messages.results.push(JSON.parse(body));
     });
   }
 
+  if (request.url !== "/" && request.url !== '/send') {
+    var statusCode = 404;
+  }
+  else
+  {
+    var statusCode = 200;
+  }
 
   //The outgoing status.
-  var statusCode = 200;
+  // var statusCode = 200;
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -69,10 +75,11 @@ var requestHandler = function(request, response) {
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
-  // up in the browser.
+  // up in the browser.dsfsdafsad
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
+  console.log(messages)
   response.end(JSON.stringify(messages));
 };
 
