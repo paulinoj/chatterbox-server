@@ -11,15 +11,17 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var url = require('url');
+
 
 var messages = {};
 messages.results = [
 {"username": "whatever", "text": "whaatver", "roomname": "HR29"},
-{"username": "whatever2", "text": "whaatver2", "roomname": "HR28"},
-{"username": "whatever3", "text": "whaatver3", "roomname": "Hell"},
+{"username": "whatever2", "text": "whaatver2", "roomname": "room1"},
+{"username": "whatever3", "text": "whaatver3", "roomname": "room1"},
 ];
 
-var rooms = ["HR29", "HR28", "Hell"];
+var rooms = ["room1"];
 
 var requestHandler = function(request, response) {
   var headers = defaultCorsHeaders;
@@ -46,52 +48,78 @@ var requestHandler = function(request, response) {
     response.end(JSON.stringify(messages));
   }
 
-  if (request.method === 'POST' && request.url === '/send') {
+  // if (request.method === 'POST' && request.url === '/classes/messages') {
+  //   var body = "";
+  //   request.on('data', function(chunk) {
+  //     body += chunk;
+  //   });
+  //   request.on('end', function(){
+  //     messages.results.unshift(JSON.parse(body));
+  //     response.writeHead(201, headers);
+  //     response.end(JSON.stringify(messages));
+  //   });
+  // }
+
+  else if (request.method === 'GET') {
+    var urlParts = url.parse(request.url);
+    var urlPath = urlParts.path;
+
+    urlPath = urlPath.substr(9);
+    console.log(urlPath);
+    var filteredMessages;
+    var filteredResponse;
+    if (urlPath !== 'messages') {
+      filteredMessages = messages.results.filter(function(message){
+        return message.roomname === urlPath;
+      });
+
+      filteredResponse = {};
+      filteredResponse.results = filteredMessages;
+    }
+    else {
+      filteredResponse = messages;
+    }
+
+    response.writeHead(200, headers);
+    response.end(JSON.stringify(filteredResponse));
+  }
+
+  else if (request.method === 'POST') {
+    var urlParts = url.parse(request.url);
+    var urlPath = urlParts.path;
+
+    urlPath = urlPath.substr(9);
+    console.log(urlPath);
+
     var body = "";
     request.on('data', function(chunk) {
       body += chunk;
     });
     request.on('end', function(){
-      messages.results.push(JSON.parse(body));
-      response.writeHead(200, headers);
-      response.end(JSON.stringify(messages));
+      messages.results.unshift(JSON.parse(body));
+      if (urlPath !== "messages") {
+        var filteredMessages = messages.results.filter(function(message){
+          return message.roomname === urlPath;
+        });
+
+        var filteredResponse = {};
+        filteredResponse.results = filteredMessages;
+      }
+      else
+      {
+        filteredResponse = messages;
+      }
+      response.writeHead(201, headers);
+      response.end(JSON.stringify(filteredResponse));
+
     });
-  }
-
-  if (request.method === 'GET' && request.url === '/') {
-    response.writeHead(200, headers);
-    response.end(JSON.stringify(messages));
-  }
-
-
-  // IF REQUEST === ROOMS
-  //   RETURN ROOMS LIST
-
-  // if (request.method === 'GET' && request.url === '/rooms') {
-  //   response.end(JSON.stringify(rooms));
-  // }
-
-
-  // IF REQUEST === ROOMS/ROOMNAME
-  //   GET ROOMNAME FROM URL
-  //   FILTER MESSAGES BASED ON ROOMNAME PROPERTY
-  //   RETURN RESULT
-  // if (request.method === 'GET' && request.url === '/rooms') {
-  //   var filteredMessages = {};
-  //   var filteredMessages.results = _.filter(messages, function(message) {
-  //     ;
-
-
-
-
-
-  if (request.url !== "/" && request.url !== '/send') {
-    var statusCode = 404;
   }
   else
   {
-    var statusCode = 200;
+      response.writeHead(404, headers);
+      response.end(JSON.stringify(messages));
   }
+
 
   //The outgoing status.
   // var statusCode = 200;

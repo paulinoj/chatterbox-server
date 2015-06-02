@@ -21,7 +21,7 @@ var app = {
     console.log('in ajax send function');
 
     $.ajax({
-      url: this.server + 'send',
+      url: this.server + 'classes/' + $('#room-select').val(),
       type: 'POST',
       data: JSON.stringify(message),
       contentType: 'application/json',
@@ -35,7 +35,7 @@ var app = {
   },
   fetch: function() {
     $.ajax({
-      url: this.server,
+      url: this.server + 'classes/' + $('#room-select').val(),
       type: 'GET',
       contentType: 'application/json',
       success: function (data) {
@@ -124,8 +124,8 @@ $(document).ready(function() {
       $('.sendmessage')[0].reset();
       var newObject = {username: values["name"],
                        text: values["message"],
-                       roomname: app.roomname};
-
+                       roomname: $('#room-select').val()};
+      console.log(newObject);
       app.send(newObject);
     }
   });
