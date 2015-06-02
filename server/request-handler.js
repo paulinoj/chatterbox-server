@@ -22,6 +22,9 @@ messages.results = [
 var rooms = ["HR29", "HR28", "Hell"];
 
 var requestHandler = function(request, response) {
+  var headers = defaultCorsHeaders;
+  headers['Content-Type'] = "text/plain";
+
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -38,17 +41,27 @@ var requestHandler = function(request, response) {
   // console.logs in your code.
   console.log("Serving request type " + request.method + " for url " + request.url);
 
+  if (request.method === 'OPTIONS') {
+    response.writeHead(200, headers);
+    response.end(JSON.stringify(messages));
+  }
+
   if (request.method === 'POST' && request.url === '/send') {
     var body = "";
-    console.log("Do we get in post method")
     request.on('data', function(chunk) {
       body += chunk;
     });
     request.on('end', function(){
       messages.results.push(JSON.parse(body));
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(messages));
     });
   }
 
+  if (request.method === 'GET' && request.url === '/') {
+    response.writeHead(200, headers);
+    response.end(JSON.stringify(messages));
+  }
 
 
   // IF REQUEST === ROOMS
@@ -84,17 +97,14 @@ var requestHandler = function(request, response) {
   // var statusCode = 200;
 
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "text/plain";
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -103,8 +113,6 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  console.log(messages)
-  response.end(JSON.stringify(messages));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
