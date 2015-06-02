@@ -12,6 +12,13 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+var messages = [
+{"username": "whatever", "text": "whaatver", "roomname": "HR29"},
+{"username": "whatever2", "text": "whaatver2", "roomname": "HR29A"},
+{"username": "whatever3", "text": "whaatver3", "roomname": "HR29B"},
+];
+
+
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -28,14 +35,22 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log("Serving request type " + request.method + " for url " + request.url);
-  console.log("Request: ");
-  console.log(request.url);
-  console.log(request.type);
-  var messages = [{"username": "whatever", "text": "whaatver", "roomname": "HR29"}];
-  if (request.url === "/messages") {
-    response.end(JSON.stringify(messages));
+
+
+  if (request.method === 'POST') {
+    var body = "";
+    request.on('data', function(chunk) {
+      body += chunk;
+    });
+    request.on('end', function(){
+      console.log(body);
+      messages.push(JSON.parse(body));
+      console.log(messages);
+    });
   }
-  // The outgoing status.
+
+
+  //The outgoing status.
   var statusCode = 200;
 
   // See the note below about CORS headers.
@@ -58,7 +73,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end("Hello, World asdf!");
+  response.end(JSON.stringify(messages));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).

@@ -15,9 +15,11 @@ var app = {
     // this.handleSubmit();
   },
   //server: 'https://api.parse.com/1/classes/chatterbox',
-  server: '127.0.0.1:3000/messages/',
+  server: 'http://127.0.0.1:3000/',
 
   send: function(message) {
+    console.log('in ajax send function');
+
     $.ajax({
       url: this.server,
       type: 'POST',
@@ -38,12 +40,16 @@ var app = {
       contentType: 'application/json',
       success: function (data) {
         console.log('chatterbox: Messages retrieved');
-        messages = data.results;
+        messages = JSON.parse(data);
+        console.log(messages);
       },
-      error: function (data) {
+      error: function (data, status) {
+        console.log(status);
         console.error('chatterbox: Failed to retrieve message');
       },
       complete: function() {
+
+        console.log(messages[0]);
 
         if (app.roomname !== undefined) {
           messages = _.filter(messages, function(message) {
@@ -105,6 +111,7 @@ $(document).ready(function() {
   app.init();
 
   $('.sendmessage').submit(function(event) {
+    console.log('message submit clicked');
     event.preventDefault();
     var values = {};
     $text = $('.sendmessage :input');
@@ -117,6 +124,7 @@ $(document).ready(function() {
       var newObject = {username: values["name"],
                        text: values["message"],
                        roomname: app.roomname};
+
       app.send(newObject);
     }
   });
