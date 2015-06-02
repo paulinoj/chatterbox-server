@@ -15,10 +15,11 @@ this file and include it in basic-server.js so that it actually works.
 var messages = {};
 messages.results = [
 {"username": "whatever", "text": "whaatver", "roomname": "HR29"},
-{"username": "whatever2", "text": "whaatver2", "roomname": "HR29A"},
-{"username": "whatever3", "text": "whaatver3", "roomname": "HR29B"},
+{"username": "whatever2", "text": "whaatver2", "roomname": "HR28"},
+{"username": "whatever3", "text": "whaatver3", "roomname": "Hell"},
 ];
 
+var rooms = ["HR29", "HR28", "Hell"];
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -47,6 +48,29 @@ var requestHandler = function(request, response) {
       messages.results.push(JSON.parse(body));
     });
   }
+
+
+
+  // IF REQUEST === ROOMS
+  //   RETURN ROOMS LIST
+
+  // if (request.method === 'GET' && request.url === '/rooms') {
+  //   response.end(JSON.stringify(rooms));
+  // }
+
+
+  // IF REQUEST === ROOMS/ROOMNAME
+  //   GET ROOMNAME FROM URL
+  //   FILTER MESSAGES BASED ON ROOMNAME PROPERTY
+  //   RETURN RESULT
+  // if (request.method === 'GET' && request.url === '/rooms') {
+  //   var filteredMessages = {};
+  //   var filteredMessages.results = _.filter(messages, function(message) {
+  //     ;
+
+
+
+
 
   if (request.url !== "/" && request.url !== '/send') {
     var statusCode = 404;
