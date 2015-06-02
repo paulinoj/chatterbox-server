@@ -21,6 +21,7 @@ messages.results = [
 {"username": "whatever3", "text": "whaatver3", "roomname": "room1"},
 ];
 
+
 var rooms = ["room1"];
 
 var requestHandler = function(request, response) {
@@ -48,18 +49,6 @@ var requestHandler = function(request, response) {
     response.end(JSON.stringify(messages));
   }
 
-  // if (request.method === 'POST' && request.url === '/classes/messages') {
-  //   var body = "";
-  //   request.on('data', function(chunk) {
-  //     body += chunk;
-  //   });
-  //   request.on('end', function(){
-  //     messages.results.unshift(JSON.parse(body));
-  //     response.writeHead(201, headers);
-  //     response.end(JSON.stringify(messages));
-  //   });
-  // }
-
   else if (request.method === 'GET') {
     var urlParts = url.parse(request.url);
     var urlPath = urlParts.path;
@@ -79,8 +68,13 @@ var requestHandler = function(request, response) {
     else {
       filteredResponse = messages;
     }
-
-    response.writeHead(200, headers);
+    if (filteredResponse.results.length === 0) {
+      response.writeHead(404, headers);
+    }
+    else
+    {
+      response.writeHead(200, headers);
+    }
     response.end(JSON.stringify(filteredResponse));
   }
 
@@ -97,6 +91,7 @@ var requestHandler = function(request, response) {
     });
     request.on('end', function(){
       messages.results.unshift(JSON.parse(body));
+
       if (urlPath !== "messages") {
         var filteredMessages = messages.results.filter(function(message){
           return message.roomname === urlPath;
@@ -111,6 +106,7 @@ var requestHandler = function(request, response) {
       }
       response.writeHead(201, headers);
       response.end(JSON.stringify(filteredResponse));
+      console.log(filteredResponse);
 
     });
   }
