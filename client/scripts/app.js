@@ -86,7 +86,7 @@ var app = {
     else friend = '';
 
     $('#chats').append('<a class="username" href="#">' + _.escape(message.username) + '</a>')
-               .append('<div class="message' + friend + '">' + _.escape(message.text) +
+               .append('<div class="message' + friend + '">' + _.escape(message.message) +
                        _.escape(message.roomname) + '</div>');
   },
   addRoom: function(room) {
@@ -123,7 +123,7 @@ $(document).ready(function() {
     if (values["name"] && values["message"]) {
       $('.sendmessage')[0].reset();
       var newObject = {username: values["name"],
-                       text: values["message"],
+                       message: values["message"],
                        roomname: $('#room-select').val()};
       console.log(newObject);
       app.send(newObject);

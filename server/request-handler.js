@@ -16,9 +16,9 @@ var url = require('url');
 
 var messages = {};
 messages.results = [
-{"username": "whatever", "text": "whaatver", "roomname": "HR29"},
-{"username": "whatever2", "text": "whaatver2", "roomname": "room1"},
-{"username": "whatever3", "text": "whaatver3", "roomname": "room1"},
+{"username": "whatever", "message": "whaatver", "roomname": "HR29"},
+{"username": "whatever2", "message": "whaatver2", "roomname": "room1"},
+{"username": "whatever3", "message": "whaatver3", "roomname": "room1"},
 ];
 
 
