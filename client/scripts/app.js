@@ -90,13 +90,11 @@ var app = {
                        _.escape(message.roomname) + '</div>');
   },
   addRoom: function(room) {
-    $('#roomSelect').append('<a href="#">' + room + '</a><br>');
-    $('#roomSelect').on('click', 'a', function(event) {
-      event.preventDefault();
-      app.roomname = $(this).text();
-      app.clearMessages();
-      app.fetch();
-    });
+    var newRoomOption = $('<option value = "' + room + '"></option>');
+    // var newRoomOption = $('<option></option>');
+    // newRoomOption.attr('value') = room;
+    newRoomOption.text(room);
+    $('#room-select').append(newRoomOption);
   },
   addFriend: function(friend) {
     $('#main').append('<a class="username">' + friend + '</a>');
